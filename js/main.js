@@ -7,14 +7,17 @@ let chapterID = ''
 function getManga(){
     //clears the list element
     document.querySelector('#listOfManga').textContent = ''
+    document.querySelector('#mangaPages').textContent = ''
+
+    document.querySelector('h3').innerText = 'Select Manga Name'
 
     // gets the input and prepares the url for the fetch
     let manga = document.querySelector('input').value.replaceAll(' ', '-')
     let findMangaURL = `https://api.mangadex.org/manga?title=${manga}`
 
     fetch(findMangaURL)
-        .this(res => res.json())
-        .this(data =>{
+        .then(res => res.json())
+        .then(data =>{
 
             // grabs list of manga from api and puts all of the titles into li
             data.data.forEach( obj => {
@@ -40,6 +43,8 @@ function getChapterList(){
     // gets the id of the li selected
     mangaID = this.id
 
+    document.querySelector('h3').innerText = 'Select Manga Chapter'
+
     //clears the list element
     document.querySelector('#listOfManga').textContent = ''
 
@@ -61,7 +66,7 @@ function getChapterList(){
             // adds event listener to all of the li
             let arrayOfLi = document.querySelectorAll('li')
             arrayOfLi.forEach(item => {
-                item.addEventListener('click', getChapterList)
+                item.addEventListener('click', getChapterPage)
             })
 
 
@@ -85,20 +90,18 @@ function getChapterPage(){
     //sets the url for the fetch
     let chapterURL = `https://api.mangadex.org/at-home/server/${chapterID}`
 
-    fetch(chapterID)
+    fetch(chapterURL)
         .then(res => res.json())
         .then(data => {
 
             // gets the chapter pages and puts them stacked on top of each other
-            for (let i = 0; i < data.chapter.dataSaver.length; i++){
+            data.chapter.dataSaver.forEach(item => {
                 let img = document.createElement('img')
-                img.src = ('https://uploads.mangadex.org/data-saver/'+ data.chapter.hash + '/' + data.chapter.dataSaver[i])
-                document.getElementById('#mangaPages').appendChild(img)
-              }
-
+                img.src = 'https://uploads.mangadex.org/data-saver/' + data.chapter.hash + '/' + item
+                document.getElementById('mangaPages').appendChild(img)
+            })
         })
         .catch(err => {
             console.log(`error ${err}`)
         })
-
 }
