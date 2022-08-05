@@ -72,5 +72,33 @@ function getChapterList(){
 }
 
 function getChapterPage(){
-    
+       
+    // gets the id from the selected li
+    chapterID = this.id
+
+    //clears the list element
+    document.querySelector('#listOfManga').textContent = ''
+
+    //clears the manga pages
+    document.querySelector('#mangaPages').textContent = ''
+
+    //sets the url for the fetch
+    let chapterURL = `https://api.mangadex.org/at-home/server/${chapterID}`
+
+    fetch(chapterID)
+        .then(res => res.json())
+        .then(data => {
+
+            // gets the chapter pages and puts them stacked on top of each other
+            for (let i = 0; i < data.chapter.dataSaver.length; i++){
+                let img = document.createElement('img')
+                img.src = ('https://uploads.mangadex.org/data-saver/'+ data.chapter.hash + '/' + data.chapter.dataSaver[i])
+                document.getElementById('#mangaPages').appendChild(img)
+              }
+
+        })
+        .catch(err => {
+            console.log(`error ${err}`)
+        })
+
 }
